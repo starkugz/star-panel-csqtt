@@ -2,25 +2,48 @@
 # ================================================================
 #  star-panel-csqtt — auto-installer для OpenWrt 25.12.x (apk)
 #  Архитектура: aarch64_cortex-a53 (ARM64 Cortex-A53)
-#  Пакеты берутся из GitHub Release (pinned-версия).
+#  Пакеты берутся из GitHub Release.
 #  https://github.com/starkugz/star-panel-csqtt
 #
-#  Запуск (последний релиз):
+#  Запуск (последний выпуск):
 #    wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | ash
-#  Конкретная версия:
-#    wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v2.1.9-openwrt ash
+#  Конкретный выпуск (тег):
+#    wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.0 ash
+#
+#  Принципы:
+#   - без CSQTT_VERSION выбирается последний выпуск; "latest" разрешается в
+#     конкретный тег ОДИН раз, до скачивания файлов;
+#   - имена пакетов берутся из SHA256SUMS выбранного выпуска (не конструируются);
+#   - контрольная сумма проверяется для каждого из трёх APK;
+#   - любая ошибка до установки (нет файла, суммы, платформа, место,
+#     зависимости, резервная копия) останавливает работу ДО изменений пакетов;
+#   - установщик НЕ удаляет пакеты при ошибке apk add; удаление старой версии
+#     возможно только как осознанный переход при понижении версии и лишь при
+#     наличии проверенных пакетов для восстановления.
 # ================================================================
 set -eu
 
 REPO="starkugz/star-panel-csqtt"
-VERSION="${CSQTT_VERSION:-}"
-# Версия пакета интеграции/панели — 1.0.0; встроенное ядро — 2.1.9.
-PKG1="csqtt_1.0.0_aarch64_cortex-a53.apk"
-PKG2="luci-app-csqtt_1.0.0_all.apk"
-PKG3="luci-i18n-csqtt-ru_all.apk"
-WORK="/tmp/csqtt-install.$$"
-BACKUP=""
+ARCH_OK="aarch64_cortex-a53"
+OW_REL_OK="25.12"
 REQUIRED_DEPS="kmod-tun luci-base rpcd-mod-ucode ucode-mod-socket coreutils-timeout"
+NEED_KB_TMP=30000
+NEED_KB_ROOT=10000
+
+# --- переопределяемые пути (для локальных тестов; на роутере пусто) ----------
+ROOT="${CSQTT_ROOT:-}"
+OW_RELEASE="${ROOT}/etc/openwrt_release"
+CONFIG="${ROOT}/etc/config/csqtt"
+INITD="${ROOT}/etc/init.d/csqtt"
+BIN="${ROOT}/usr/bin/csqtt"
+RCD="${ROOT}/etc/rc.d"
+TMPBASE="${CSQTT_TMPDIR:-${ROOT:+$ROOT/tmp}}"
+[ -n "$TMPBASE" ] || TMPBASE=/tmp
+
+VERSION="${CSQTT_VERSION:-}"
+ROLLBACK_DIR="${CSQTT_ROLLBACK_DIR:-}"
+WORK="$TMPBASE/csqtt-install.$$"
+BACKUP=""
 
 log()  { printf '[+] %s\n' "$*"; }
 info() { printf '[i] %s\n' "$*"; }
@@ -28,7 +51,7 @@ warn() { printf '[!] %s\n' "$*" >&2; }
 die()  { printf '[x] %s\n' "$*" >&2; exit 1; }
 
 download() {
-	# download <url> <out>
+	# download <url> <out>  (не исполняет загруженные данные)
 	if command -v uclient-fetch >/dev/null 2>&1; then
 		uclient-fetch -q -O "$2" "$1"
 	elif command -v wget >/dev/null 2>&1; then
@@ -40,149 +63,292 @@ download() {
 	fi
 }
 
+fetch() { download "$1" "$2"; }
+
+# --- разрешение latest в конкретный тег (один раз) ---------------------------
+resolve_latest_tag() {
+	json="$WORK/latest.json"
+	if fetch "https://api.github.com/repos/$REPO/releases/latest" "$json"; then
+		tag=$(sed -n 's/.*"tag_name":[[:space:]]*"\([^"]*\)".*/\1/p' "$json" | head -n1)
+		if [ -n "$tag" ]; then printf '%s' "$tag"; return 0; fi
+	fi
+	# запасной путь: редирект releases/latest -> /releases/tag/<tag>
+	if command -v curl >/dev/null 2>&1; then
+		url=$(curl -fsSL -o /dev/null -w '%{url_effective}' "https://github.com/$REPO/releases/latest" 2>/dev/null || true)
+	else
+		url=$(wget -q -S -O /dev/null "https://github.com/$REPO/releases/latest" 2>&1 | sed -n 's/.*[Ll]ocation: //p' | tail -n1 | tr -d '\r')
+	fi
+	tag="${url##*/}"
+	case "$tag" in
+		v[0-9]*) printf '%s' "$tag"; return 0 ;;
+	esac
+	return 1
+}
+
+# --- версии ----------------------------------------------------------------
+installed_version() {
+	apk list --installed 2>/dev/null | sed -n 's/^csqtt-\([0-9][^ ]*\) .*/\1/p' | head -n1
+}
+
+version_gt() {
+	# 0, если $1 > $2 (сначала apk version -t, иначе числовой fallback)
+	res=$(apk version -t "$1" "$2" 2>/dev/null || true)
+	if [ "$res" = ">" ]; then return 0; fi
+	if [ "$res" = "<" ] || [ "$res" = "=" ]; then return 1; fi
+	[ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | tail -n1)" = "$1" ] && [ "$1" != "$2" ]
+}
+
+# --- проверки до изменений --------------------------------------------------
+check_platform() {
+	[ -f "$OW_RELEASE" ] || die "не найден $OW_RELEASE — это OpenWrt?"
+	# shellcheck disable=SC1090  # файл релиза OpenWrt, не пользовательские данные
+	. "$OW_RELEASE"
+	ARCH="${DISTRIB_ARCH:-}"
+	OW_REL="${DISTRIB_RELEASE:-}"
+	info "OpenWrt ${OW_REL:-?}, arch ${ARCH:-?}"
+	case "$ARCH" in
+		"$ARCH_OK") : ;;
+		*) die "поддерживается только $ARCH_OK (обнаружено: ${ARCH:-неизвестно})." ;;
+	esac
+	# Ровно 25.12.x, а не «любая версия >= 25»: будущие выпуски не поддерживаются
+	# так же, как не тестировались.
+	case "$OW_REL" in
+		"$OW_REL_OK".*) : ;;
+		*) die "поддерживается только OpenWrt ${OW_REL_OK}.x (обнаружено: ${OW_REL:-неизвестно})." ;;
+	esac
+}
+
 check_space() {
 	# check_space <path> <need_kb>
 	avail=$(df -k "$1" 2>/dev/null | awk 'NR==2 {print $4}')
 	[ -n "$avail" ] || return 0
-	[ "$avail" -ge "$2" ] || die "мало места в $1: нужно ${2}KiB, свободно ${avail}KiB"
+	[ "$avail" -ge "$2" ] || die "мало места в $1: нужно ${2}KiB, свободно ${avail}KiB."
 }
 
-installed_version() {
-	v=$(apk info -v csqtt 2>/dev/null | head -n1 || true)
-	[ -n "$v" ] && { printf '%s' "$v"; return; }
-	[ -x /usr/bin/csqtt ] && /usr/bin/csqtt --version 2>/dev/null | head -n1 || true
+check_dependencies() {
+	missing=""
+	# shellcheck disable=SC2086  # REQUIRED_DEPS — список через пробел без спецсимволов
+	for dep in $REQUIRED_DEPS; do
+		apk info -e "$dep" >/dev/null 2>&1 || missing="$missing $dep"
+	done
+	if [ -z "$missing" ]; then
+		info "обязательные зависимости на месте."
+		return 0
+	fi
+	info "не хватает зависимостей:$missing — проверяю возможность установки..."
+	# сухой прогон: разрешимость зависимостей без изменения установленных пакетов
+	# shellcheck disable=SC2086
+	if apk add --simulate $REQUIRED_DEPS >/dev/null 2>&1; then
+		info "зависимости разрешаются (будут установлены вместе с пакетами)."
+	else
+		die "не хватает зависимостей:$missing, и apk не может их разрешить. Установите их и повторите."
+	fi
 }
 
-# --- 1. Проверки окружения ---------------------------------------------------
+# --- резервная копия --------------------------------------------------------
+backup_config() {
+	[ -f "$CONFIG" ] || { info "конфигурация отсутствует (чистая установка)."; return 0; }
+	BACKUP="${CONFIG}.bak.$(date +%Y%m%d-%H%M%S)"
+	if cp -p "$CONFIG" "$BACKUP" 2>/dev/null; then
+		chmod 600 "$BACKUP" 2>/dev/null || true
+		info "резервная копия конфигурации: $BACKUP"
+	else
+		BACKUP=""
+		die "не удалось создать резервную копию $CONFIG — обновление остановлено, пакеты не изменялись."
+	fi
+}
+
+service_enabled() { [ -e "$RCD/S99csqtt" ]; }
+
+# --- выбор пакетов из SHA256SUMS --------------------------------------------
+# Возвращает "hash name" для первого файла, подходящего под расширенное
+# регулярное выражение. Пусто — файла нет.
+pick_asset() {
+	awk -v pat="$1" '
+		{
+			name = $2
+			sub(/^\.\//, "", name)
+			if (name ~ pat) { print $1, name; exit }
+		}' "$WORK/SHA256SUMS"
+}
+
+download_and_verify() {
+	# download_and_verify <name> <expected_sha>
+	fetch "$BASE/$1" "$WORK/$1" || die "не удалось скачать $1 из выпуска $TAG."
+	actual=$(sha256sum "$WORK/$1" | awk '{print $1}')
+	[ "$actual" = "$2" ] || die "SHA256 $1 не совпала (получено $actual, ожидалось $2) — установка остановлена."
+}
+
+# --- установка --------------------------------------------------------------
+install_packages() {
+	# shellcheck disable=SC2086  # PKG_* — имена файлов без пробелов
+	apk add --allow-untrusted "$WORK/$CORE_NAME" "$WORK/$PANEL_NAME" "$WORK/$I18N_NAME"
+}
+
+# Пакеты для восстановления установленной версии: ищем в CSQTT_ROLLBACK_DIR
+# или в $TMPBASE/csqtt-rollback. Без них переход (удаление) запрещён.
+find_rollback() {
+	dir="$ROLLBACK_DIR"
+	[ -n "$dir" ] || dir="$TMPBASE/csqtt-rollback"
+	[ -d "$dir" ] || return 1
+	for f in csqtt luci-app-csqtt luci-i18n-csqtt-ru; do
+		found=$(find "$dir" -maxdepth 1 -name "${f}_*.apk" 2>/dev/null | head -n1)
+		[ -n "$found" ] || return 1
+	done
+	printf '%s' "$dir"
+}
+
+restore_rollback() {
+	dir="$1"
+	info "восстановление предыдущей установки из $dir ..."
+	# shellcheck disable=SC2046  # имена файлов без пробелов
+	apk add --allow-untrusted $(find "$dir" -maxdepth 1 -name '*.apk') \
+		|| warn "восстановление пакетов не удалось — см. состояние ниже."
+	if [ -n "$BACKUP" ] && [ -f "$BACKUP" ] && [ ! -f "$CONFIG" ]; then
+		cp -p "$BACKUP" "$CONFIG" 2>/dev/null || true
+	fi
+}
+
+# --- 1. окружение -----------------------------------------------------------
 [ "$(id -u)" = 0 ] || die "нужны права root."
-[ -f /etc/openwrt_release ] || die "не найден /etc/openwrt_release — это OpenWrt?"
-command -v apk >/dev/null 2>&1 || die "нужен apk-tools (OpenWrt >= 25). Для старых версий пакетов .ipk нет."
-
-. /etc/openwrt_release
-ARCH="${DISTRIB_ARCH:-}"
-OW_REL="${DISTRIB_RELEASE:-?}"
-OW_MAJOR=$(printf '%s' "$OW_REL" | cut -d. -f1)
-info "OpenWrt ${OW_REL}, arch ${ARCH:-?}"
-
-case "$ARCH" in
-	aarch64_cortex-a53) : ;;
-	*) die "поддерживается только aarch64_cortex-a53 (обнаружено: ${ARCH:-неизвестно})." ;;
-esac
-[ "${OW_MAJOR:-0}" -ge 25 ] 2>/dev/null || die "нужен OpenWrt 25.x (apk); обнаружено ${OW_REL}."
-
-log "Проверка свободного места..."
-check_space /tmp 30000
-check_space / 10000
-
-# Индекс пакетов нужен для резолва зависимостей (kmod-tun, luci-base,
-# rpcd-mod-ucode, ucode-mod-socket, coreutils-timeout). Без него apk add
-# локального файла может не найти зависимости на «чистом» устройстве.
-log "Обновление индекса пакетов (apk update)..."
-apk update >/dev/null 2>&1 || warn "apk update не удался (нет сети?) — зависимости могут не установиться"
-
-# --- 2. Версия и URL релиза --------------------------------------------------
-if [ -n "$VERSION" ]; then
-	BASE="https://github.com/${REPO}/releases/download/${VERSION}"
-	info "версия: $VERSION"
-else
-	BASE="https://github.com/${REPO}/releases/latest/download"
-	info "версия: последний релиз (latest)"
-fi
-
-# --- 3. Что уже установлено --------------------------------------------------
-CUR_VER=$(installed_version)
-[ -n "$CUR_VER" ] && info "установлено сейчас: $CUR_VER" || info "CSQTT ещё не установлен."
-
+command -v apk >/dev/null 2>&1 || die "нужен apk-tools (OpenWrt 25.x). Пакетов .ipk для старых версий нет."
+check_platform
 mkdir -p "$WORK"
 trap 'rm -rf "$WORK"' EXIT INT TERM
 
-# --- 4. Резервная копия конфигурации ----------------------------------------
-if [ -f /etc/config/csqtt ]; then
-	BACKUP="/etc/config/csqtt.bak.$(date +%Y%m%d-%H%M%S)"
-	if cp -p /etc/config/csqtt "$BACKUP" 2>/dev/null; then
-		info "резервная копия: $BACKUP"
-	else
-		BACKUP=""
-		warn "не удалось создать резервную копию /etc/config/csqtt"
-	fi
+# --- 2. выбор выпуска (latest -> тег один раз) ------------------------------
+if [ -n "$VERSION" ]; then
+	TAG="$VERSION"
+	case "$TAG" in v*) : ;; *) TAG="v$TAG" ;; esac
+	info "выбран выпуск: $TAG"
+else
+	info "определяю последний выпуск..."
+	TAG=$(resolve_latest_tag) || die "не удалось определить последний выпуск (нет сети или API недоступен). Укажите CSQTT_VERSION=<тег>."
+	info "последний выпуск: $TAG"
+fi
+case "$TAG" in
+	*[!A-Za-z0-9._-]*) die "некорректное имя тега: $TAG" ;;
+esac
+BASE="https://github.com/$REPO/releases/download/$TAG"
+
+# --- 3. метаданные выпуска и имена файлов -----------------------------------
+log "Читаю SHA256SUMS выпуска $TAG ..."
+fetch "$BASE/SHA256SUMS" "$WORK/SHA256SUMS" \
+	|| die "выпуск $TAG недоступен или не содержит SHA256SUMS — установка остановлена."
+
+CORE=$(pick_asset '^csqtt_[0-9][^/]*_aarch64_cortex-a53[.]apk$')
+PANEL=$(pick_asset '^luci-app-csqtt_[^/]*_all[.]apk$')
+I18N=$(pick_asset '^luci-i18n-csqtt-ru[^/]*[.]apk$')
+[ -n "$CORE" ] || die "в выпуске $TAG нет пакета csqtt (aarch64_cortex-a53)."
+[ -n "$PANEL" ] || die "в выпуске $TAG нет пакета luci-app-csqtt."
+[ -n "$I18N" ] || die "в выпуске $TAG нет пакета luci-i18n-csqtt-ru."
+
+CORE_NAME=${CORE#* }
+CORE_SHA=${CORE%% *}
+PANEL_NAME=${PANEL#* }
+PANEL_SHA=${PANEL%% *}
+I18N_NAME=${I18N#* }
+I18N_SHA=${I18N%% *}
+info "пакеты выпуска: $CORE_NAME, $PANEL_NAME, $I18N_NAME"
+
+# --- 4. скачивание и проверка каждого APK -----------------------------------
+log "Загрузка и проверка пакетов ..."
+download_and_verify "$CORE_NAME" "$CORE_SHA"
+download_and_verify "$PANEL_NAME" "$PANEL_SHA"
+download_and_verify "$I18N_NAME" "$I18N_SHA"
+info "контрольные суммы всех трёх пакетов совпали."
+
+# --- 5. проверки до изменений -----------------------------------------------
+log "Проверка свободного места ..."
+check_space "$TMPBASE" "$NEED_KB_TMP"
+check_space "${ROOT}/" "$NEED_KB_ROOT"
+apk update >/dev/null 2>&1 || warn "apk update не удался (нет сети?) — зависимости могут не установиться."
+check_dependencies
+log "Резервная копия конфигурации ..."
+backup_config
+ENABLED_BEFORE=0
+if service_enabled; then ENABLED_BEFORE=1; fi
+
+CUR_VER=$(installed_version || true)
+if [ -n "$CUR_VER" ]; then info "установлено сейчас: $CUR_VER"; else info "CSQTT ещё не установлен."; fi
+NEW_VER=$(printf '%s' "$CORE_NAME" | sed -n 's/^csqtt_\([0-9][^_]*\)_.*/\1/p')
+DOWNGRADE=0
+if [ -n "$CUR_VER" ] && [ -n "$NEW_VER" ] && version_gt "$CUR_VER" "$NEW_VER"; then
+	DOWNGRADE=1
+	info "обнаружено понижение версии: $CUR_VER -> $NEW_VER."
 fi
 
-# --- 5. Загрузка и проверка контрольных сумм --------------------------------
-log "Загрузка пакетов из релиза..."
-download "$BASE/SHA256SUMS" "$WORK/SHA256SUMS" || die "не удалось скачать SHA256SUMS (релиз $BASE доступен?)."
-for p in "$PKG1" "$PKG2" "$PKG3"; do
-	download "$BASE/$p" "$WORK/$p" || die "не удалось скачать $p."
-done
-
-log "Проверка SHA256..."
-( cd "$WORK" && sha256sum -c SHA256SUMS ) || die "контрольные суммы не совпали — загрузка повреждена."
-
-# --- 6. Установка -----------------------------------------------------------
-# apk может отказаться менять пакеты напрямую при смене схемы версий
-# (2.1.9-r1 -> 1.0.0 = понижение). Тогда — безопасный переход: резервная
-# копия конфигурации уже сделана, удаляем пакеты и ставим новые.
-install_packages() {
-	apk add --allow-untrusted "$WORK/$PKG1" "$WORK/$PKG2" "$WORK/$PKG3"
-}
-
-log "Установка пакетов..."
-if ! install_packages; then
-	info "прямая замена не удалась (возможно, смена схемы версий 2.1.9 -> 1.0.0)."
-	info "Переход: удаление пакетов с сохранением конфигурации и повторная установка..."
+# --- 6. установка (без удаления при ошибке) ---------------------------------
+log "Установка пакетов ..."
+if install_packages; then
+	info "пакеты установлены."
+else
+	add_rc=$?
+	# НИКАКОГО удаления по общим ошибкам (зависимости/место/повреждение).
+	if [ "$DOWNGRADE" != 1 ]; then
+		die "apk add не удался (код $add_rc). Пакеты не изменялись. Проверьте место, зависимости и целостность пакетов."
+	fi
+	info "прямая замена не удалась при понижении версии."
+	RBDIR=$(find_rollback || true)
+	if [ -z "$RBDIR" ]; then
+		die "для перехода $CUR_VER -> $NEW_VER нужны проверенные пакеты установленной версии. Поместите их в $TMPBASE/csqtt-rollback (или задайте CSQTT_ROLLBACK_DIR) и повторите. Пакеты не удалялись."
+	fi
+	log "Переход: удаление $CUR_VER и установка $NEW_VER (восстановление из $RBDIR) ..."
 	apk del luci-i18n-csqtt-ru luci-app-csqtt csqtt >/dev/null 2>&1 || true
 	if ! install_packages; then
-		[ -n "$BACKUP" ] && warn "конфигурация сохранена: $BACKUP"
-		die "apk add не удался после перехода."
+		warn "установка нового выпуска не удалась — восстанавливаю предыдущую установку."
+		restore_rollback "$RBDIR"
+		warn "фактическое состояние: $(installed_version || echo 'пакеты отсутствуют')"
+		[ -n "$BACKUP" ] && warn "резервная копия конфигурации: $BACKUP"
+		die "переход не завершён; выполнено восстановление предыдущей установки."
 	fi
 fi
 # Если apk удалил conffile при переходе — восстановить сохранённую копию.
-if [ ! -f /etc/config/csqtt ] && [ -n "$BACKUP" ] && [ -f "$BACKUP" ]; then
-	cp -p "$BACKUP" /etc/config/csqtt
+if [ ! -f "$CONFIG" ] && [ -n "$BACKUP" ] && [ -f "$BACKUP" ]; then
+	cp -p "$BACKUP" "$CONFIG" || true
 	info "конфигурация восстановлена из $BACKUP"
 fi
 
-# --- 7. Проверка результата -------------------------------------------------
+# --- 7. проверка результата -------------------------------------------------
 missing=""
+# shellcheck disable=SC2086  # REQUIRED_DEPS — список через пробел без спецсимволов
 for dep in $REQUIRED_DEPS; do
 	apk info -e "$dep" >/dev/null 2>&1 || missing="$missing $dep"
 done
-if [ -n "$missing" ]; then
-	warn "не установлены обязательные зависимости:$missing"
-	die "установка не завершена: установите зависимости и повторите."
-fi
-[ -x /usr/bin/csqtt ] || die "после установки нет /usr/bin/csqtt."
-NEW_VER=$(installed_version)
-info "установлено: ${NEW_VER:-csqtt}"
-info "ядро: $(/usr/bin/csqtt version 2>/dev/null | head -n1 || echo '?')"
-
-if [ -x /etc/init.d/csqtt ] && /etc/init.d/csqtt enabled 2>/dev/null; then
+[ -z "$missing" ] || die "после установки не хватает зависимостей:$missing"
+[ -x "$BIN" ] || die "после установки нет $BIN."
+NEW_INSTALLED=$(installed_version || true)
+info "установлено: ${NEW_INSTALLED:-csqtt}"
+info "ядро: $("$BIN" version 2>/dev/null | head -n1 || echo '?')"
+if [ "$ENABLED_BEFORE" = 1 ] && ! service_enabled; then
+	if [ -x "$INITD" ]; then "$INITD" enable >/dev/null 2>&1 || true; fi
+	info "автозапуск службы сохранён."
+elif service_enabled; then
 	info "автозапуск службы включён."
 else
 	info "автозапуск не включён (включите при необходимости)."
 fi
 
-# --- 8. Дальнейшие шаги и откат ---------------------------------------------
+# --- 8. дальнейшие шаги -----------------------------------------------------
 cat <<EOF
 
-[+] Готово: CSQTT 1.0 установлен (пакет для OpenWrt + панель LuCI + ядро 2.1.9).
+[+] Готово: star-panel-csqtt установлен (пакет + панель LuCI + ядро CSQTT 2.1.9).
 
-Дальше (обязательно включить профиль и службу):
-  1. LuCI → Службы → star-panel-csqtt
-  2. Профиль (ВКЛЮЧИТЕ его): csqtt profile import 'csqtt://…' --commit --activate
-  3. VK: вставьте VK access token или полный OAuth redirect-URL (поле VK JS token)
-  4. Служба: uci set csqtt.main.enabled='1'; uci commit csqtt
-  5. Запуск: /etc/init.d/csqtt enable; /etc/init.d/csqtt start
-  6. Проверка: csqtt status; csqtt doctor
-  7. Трафик: привязать прокси к csqtt0 (Mihomo/ssclash, interface-name: csqtt0)
+Дальше в LuCI (Службы → star-panel-csqtt):
+  1. Профили → Импортировать ссылку: вставьте ссылку csqtt://… (без отметки «Активировать»).
+  2. Откройте профиль (Изменить): Режим авторизации VK = Auto JS, Режим хешей VK = Auto JS.
+  3. В поле VK JS token вставьте сам токен или полный OAuth redirect-URL.
+  4. Сохраните и включите профиль.
+  5. Включите службу: Настройки → CSQTT включён (или uci set csqtt.main.enabled='1'; uci commit csqtt).
+  6. Проверьте соединение: csqtt status; csqtt doctor.
+  7. Трафик: направьте прокси на csqtt0 (Mihomo/ssclash, interface-name: csqtt0)
+     либо выполните явный тест: curl --interface csqtt0 https://1.1.1.1/cdn-cgi/trace.
 
 ВАЖНО: interface-only — установка сама по себе НЕ направляет весь трафик в
 туннель; нужен пользовательский прокси, привязанный к csqtt0.
 
-Откат к предыдущей версии:
-  /etc/init.d/csqtt stop
-  apk del luci-i18n-csqtt-ru luci-app-csqtt csqtt
-  CSQTT_VERSION=<тег> sh -c "\$(wget --no-proxy -qO- https://github.com/${REPO}/raw/refs/heads/main/install-csqtt.sh)"
+Обновление/откат:
+  - конфигурация сохраняется; копия для этого запуска: ${BACKUP:-нет}
+  - переустановить конкретный выпуск: CSQTT_VERSION=<тег> ash install-csqtt.sh
+  - резервная копия одного конфига НЕ является откатом пакетов.
 EOF
-if [ -n "$BACKUP" ]; then
-	echo "  Восстановить конфигурацию: cp '$BACKUP' /etc/config/csqtt"
-fi
