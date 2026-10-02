@@ -1,0 +1,10 @@
+# [M5] Запасной слой ротации. Размерную ротацию ведёт сама служба CSQTT
+# (main.log_file/log_size_kb, M4a); здесь — страховка по времени.
+# copytruncate обязателен: служба CSQTT держит fd открытым.
+/var/log/csqtt.log {
+	weekly
+	rotate 4
+	copytruncate
+	missingok
+	notifempty
+}

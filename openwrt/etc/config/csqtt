@@ -1,0 +1,52 @@
+# CSQTT — конфигурация OpenWrt (UCI, /etc/config/csqtt).
+# Схема M4a: csqtt-openwrt/uci.rs (typed pool: main + routing + профили server).
+# Правила контракта:
+#   - интерфейс csqtt0 фиксирован (не UCI-поле);
+#   - runtime-состояние — только /var/run/csqtt/status.json, никогда здесь;
+#   - секреты (password, vk_js_token) через статусы/LuCI не выдаются;
+#   - device_id привязан к паролю на сервере — переносить как есть, не генерировать.
+# Профили удобнее добавлять CLI: csqtt profile import 'csqtt://…' --commit
+# (или секцией config server ниже вручную).
+
+config csqtt 'main'
+	option enabled '0'
+	option selection_mode 'priority'
+	option active_profile ''
+	option failover '1'
+	option failback '0'
+	option health_interval '5'
+	option fail_threshold '3'
+	option success_threshold '2'
+	option cooldown '60'
+	option reconnect_delay '5'
+	option failback_stable_time '60'
+	option health_mode 'both'
+	option health_target ''
+	option captcha_policy 'failover'
+	option tun_address ''
+	option tun_mtu '1280'
+	option dns ''
+	option log_level 'info'
+	option log_file '/var/log/csqtt.log'
+	option log_size_kb '512'
+
+# Контракт M3X: auto = interface-only (БЕЗ маршрутов/правил/таблиц — служба CSQTT их
+# не ставит); none — отладочный алиас. Других режимов нет.
+config csqtt 'routing'
+	option mode 'auto'
+
+# Шаблон профиля (раскомментировать и заполнить; enabled='1' только после
+# проверки csqtt doctor):
+#
+# config server 'profile1'
+# 	option name 'Main'
+# 	option enabled '0'
+# 	option priority '10'
+# 	option peer '198.51.100.10:46000'
+# 	option password 'SECRET'
+# 	option vk 'hash1,hash2'
+# 	option device_id 'uuid-привязан-к-паролю'
+# 	option workers '18'
+# 	option obfs 'audio'
+# 	option turn_transport 'udp'
+# 	option fingerprint 'chrome'

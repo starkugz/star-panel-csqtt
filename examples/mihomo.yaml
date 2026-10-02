@@ -1,0 +1,46 @@
+# Пример конфигурации Mihomo (Clash.Meta) для CSQTT.
+# CSQTT поднимает интерфейс csqtt0 и НЕ трогает маршруты/DNS/firewall.
+# Весь трафик в туннель направляется здесь — привязкой к устройству
+# (interface-name) — это и есть штатная модель интеграции (SO_BINDTODEVICE).
+#
+# Проверка после запуска:
+#   curl -s --interface csqtt0 https://api.ipify.org    # должен вернуть IP peer'а
+
+mixed-port: 7890
+allow-lan: true
+mode: rule
+log-level: info
+ipv6: false
+unified-delay: true
+tcp-concurrent: true
+
+dns:
+  enable: true
+  listen: 0.0.0.0:7874
+  ipv6: false
+  default-nameserver:
+    - https://77.88.8.8/dns-query
+    - https://8.8.8.8/dns-query
+  nameserver:
+    - https://8.8.8.8/dns-query#VPN
+    - https://8.8.4.4/dns-query#VPN
+
+proxies:
+  - name: CSQTT
+    type: direct
+    interface-name: csqtt0
+
+proxy-groups:
+  - name: VPN
+    type: select
+    proxies:
+      - CSQTT
+
+rules:
+  # RU/локальное — напрямую; остальное — через туннель.
+  - GEOIP,LAN,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,vk.ru,DIRECT
+  - DOMAIN-KEYWORD,vk,DIRECT
+  - DOMAIN-SUFFIX,yandex.ru,DIRECT
+  - DOMAIN-SUFFIX,ya.ru,DIRECT
+  - MATCH,VPN

@@ -1,0 +1,2 @@
+config csqtt 'main'
+	option enabled '0'

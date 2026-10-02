@@ -1,0 +1,1625 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: csqtt 2.1.9\n"
+"PO-Revision-Date: 2026-09-17 00:00+0000\n"
+"Last-Translator: CSQTT Team\n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n""Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "%s: %s"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "576..65535"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "9..126, multiple of 9 (server limit)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Actions"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Activate"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Active profile"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Add profile"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Age"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Auto (by priority)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CAPTCHA"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CAPTCHA mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CAPTCHA pending"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CAPTCHA policy"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CAPTCHA policy (override)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CSQTT"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CSQTT Logs"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CSQTT — CAPTCHA"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CSQTT — Profiles"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CSQTT — Settings"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Cancel"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Cancel challenge %s? The profile will retry with a new CAPTCHA."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Clear"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Clear failed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Clear is available for the log file only"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Client IDs"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Close"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Connect"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Connected"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Cooldown"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Cooldown (override)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Copy"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Copy link"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Delete"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Delete profile \"%s\"? The UCI section will be removed."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Device ID"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Disable"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Download"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Edit"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Edit profile \"%s\""
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Enable"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Enabled"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Expires in"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Export"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Export profile \"%s\""
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Fail threshold"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Fail threshold (override)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failback"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failback stable time"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failover"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Fails"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "File"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Fingerprint"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Global settings (UCI /etc/config/csqtt — section main)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Health interval"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Health mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Health target"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Helper endpoint"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "ID"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "IP or CIDR for csqtt0 override"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Import link"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Import profile"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Isolation note (csqtt0)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Last error"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Log cleared (%s bytes)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Log file"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Log level"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Log size"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Logs"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Name"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "No pending CAPTCHA right now — no profile waits for confirmation."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Not connected"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Not running"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Note"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Obfs"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Open the helper link on a phone or laptop in the same LAN — the standard VK check opens there; the profile continues automatically after completion."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Password"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Passwords and VK tokens are never read back from the router; leaving a secret field empty keeps the stored value."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Peer"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Permission denied or rpcd error"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Preview"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Priority"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Profile"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Profiles"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Profiles waiting"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "QR could not be rendered; use the link below."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "RPC error"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "RPC error (logs)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Reconnect delay"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Refresh"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Restart"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Routing (M3X)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Routing (read-only diagnostic)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Run diagnostics (test_conf)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Save"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Save & apply"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Save (commit)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Scan the QR code with the iPhone camera or open the link in Safari. The device must be connected to the same LAN as the router."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Selection mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Service action %s failed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Settings"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Solve CAPTCHA"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Solve CAPTCHA — %s"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Start"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "State"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Status"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Stop"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Success threshold"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Success threshold (override)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Supported: csqtt://connect v2 and legacy csqtt:// links (parser link.rs). VK hashes / vk.com/call/join links go to the “vk” field of the profile editor. For token-based auto_js profiles (a link without hashes) leave Activate off, set the VK JS token in the editor, then enable the profile. Preview does not touch the live config; commit is transactional with backup (M4a)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Syslog"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "TUN MTU"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "TUN address"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "TURN / obfs"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "TURN transport"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "The link contains the password — treat it as a secret."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "The link is single-use and lives only while the challenge is open — do not forward it outside your network."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Traffic RX / TX"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Truncate /var/log/csqtt.log? This cannot be undone."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Tunnel DNS override"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Tunnel csqtt0"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "UCI section name"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Uptime"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "VK JS token"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "VK auth mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "VK hash mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "VK hashes / links"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Web Helper"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Workers"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Workers / Reconnects"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "action failed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "auto = interface-only (M3X): the daemon never installs routes/rules/tables and never changes WAN default, system DNS or firewall/NAT. There is no “capture whole LAN” mode by design."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "auto-refresh 5s"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "auto_js requires vk_js_token and auth mode auto_js"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "auto|wv|rjs"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "bound to password/access on the server — do not change without unbinding in the server panel"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "challenge cancelled"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "comma-separated hashes or vk.com/call/join links (upstream parser)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "csqtt0 is an isolated egress for a user-configured proxy only. Traffic enters the tunnel solely for processes explicitly bound to the interface (SO_BINDTODEVICE). Control-plane CSQTT/VK/TURN stays on WAN."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "daemon status not available"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "equal priorities — tie-break by config order; set explicit values in the editor"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "expired"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "export failed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "grep (regular expression)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "helper API did not answer"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "helper link unavailable"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "host:port of the CSQTT server"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "iPhone hint: if Safari shows a privacy warning for the plain-HTTP local address, choose Show Details → Visit this website."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "id must match [A-Za-z0-9_]+ and differ from main/routing"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "interface-only: no routes/rules/tables"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "lines"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "loading…"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "lower value = preferred in priority mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "no"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "no data"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "no profiles"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "open"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "probe only clears suspicion; it never makes a profile ACTIVE"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "profile %s deleted"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "profile imported"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "reachable"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "reconnects"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "routing.mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "saved — running test_conf…"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "secret — not echoed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "secret — not echoed; empty keeps stored value"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "selection mode = priority (auto)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "settings saved"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "start tunnel automatically with the service"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "test_conf RPC error"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "test_conf reported problems (code %s) — see Settings/doctor"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "test_conf: OK"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "test_conf: issues"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "tunnel-internal only; system DNS/dnsmasq are never touched"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "uci commit failed (write access required)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "uci commit failed (write access required) or rpcd error"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "uci write error: %s"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "unreachable"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "used when selection_mode = manual"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "yes"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "— none —"
+msgstr ""
+
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Interface-only"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "No errors"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "none"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "routes"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "After a failure the profile is not used for this time."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Automatically return to a higher-priority profile after it has recovered and stayed healthy."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Automatically switch to another available profile when the current one stops working."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Both — both checks (recommended)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Check mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Connection health check"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Cooldown after failure"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "DNS is used inside the tunnel only. CSQTT never changes the system DNS or dnsmasq."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Data — actual traffic exchange"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Debug — detailed diagnostics"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Error — errors only"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failover and recovery"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failure threshold"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "General"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Health check interval"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Higher levels write more detail to the log."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How long a profile must stay healthy before failback."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How many consecutive failed checks make a profile unhealthy."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How many successful checks are required to confirm recovery."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How often the connection state is checked."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "IP or CIDR (optional)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "IP, host or address (optional)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "If empty, CSQTT uses internal connection-state signals. The target is only an extra probe and never makes a profile ACTIVE by itself."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Info — normal operation"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Leave empty to use the address received from the server."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Log"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Manual"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Maximum packet size of the csqtt0 interface."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Pause before the next connection attempt."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Priority (auto)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Priority: pick the best enabled profile automatically. Manual: always use the active profile."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Probe target"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Rotate the log when it reaches this size."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Start the tunnel automatically with the service."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Switch to another profile"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Transport — connection and workers state"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Tunnel"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Tunnel DNS"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Used when selection mode is Manual."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Wait for CAPTCHA to be solved"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Warning — errors and warnings"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "What counts as a positive health signal between checks."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "What to do when a profile requires CAPTCHA solving."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "bytes"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "e.g. 77.88.8.8,77.88.8.1"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "h"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "min"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "sec"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "times"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Address"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "the Web Helper service is not answering"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "the daemon is not running"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Active"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Ready"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Connecting"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Standby"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Disabled"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CAPTCHA required"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Auth failed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "A successful probe alone does not make a profile ACTIVE."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Additional probe target"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Address of the CSQTT server (host:port)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Address of the csqtt0 interface. Empty means use the address from the server."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Advanced"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "After a failure the profile is not used for this time before the next attempt."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "After a higher-priority profile recovers, CSQTT can automatically return to it."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Automatic failback"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Automatic failover"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "CSQTT enabled"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Change only when diagnosing MTU/fragmentation problems."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Comma-separated VK hashes or vk.com/call/join links (parsed by the core)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Compatibility"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Connection"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Connection secret. The stored password is never read back; an empty field keeps the existing value."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "DNS for the tunnel connection. CSQTT does not change the system DNS of OpenWrt or dnsmasq."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Data transfer"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Debug creates more log entries and may increase load."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Device ID is bound to the existing access/password. Do not change or regenerate without unbinding it on the server."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Disabled profiles do not participate in automatic selection."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Display name of the profile in LuCI."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Do not set the maximum without measuring throughput, CPU, RAM, temperature and ping."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Empty = use the global setting (%s · %s)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Empty = use the global setting (%s)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failover overrides"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Failure threshold (override)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Health check mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How CAPTCHA is solved: auto, wv (WebView) or rjs (Rust JS)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How VK hashes are obtained: manual (from the VK field) or auto_js. auto_js also needs VK auth mode auto_js and a VK JS token."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How long a higher-priority profile must stay stable before automatic failback."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How many consecutive failed checks are required before a profile is considered unhealthy."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How many successful checks are required to confirm the profile works stably again."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "How often CSQTT checks the connection state."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Identification / compatibility"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "If empty, internal connection-state signals are used. The target is only an extra check."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Internal UCI section name (letters, digits, underscore)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Logging"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Logging · Advanced"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Lower number means higher priority (10 is preferred over 20)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Maximum IP packet size of the csqtt0 interface. A larger MTU is not always faster."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Maximum log size"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Network"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Network · Advanced"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Network · Performance"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Number of parallel CSQTT worker channels. Multiple of 9, 9..126 (server limit)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Obfuscation (OBFS)"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Obfuscation profile used by the connection (audio or video)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "On problems with the current profile CSQTT can switch to the next available profile. Works in priority selection mode."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Path to the local CSQTT log file."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Pause between repeated connection attempts."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Performance"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Performance · CPU/RAM"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Priority: CSQTT automatically picks the best available enabled profile. Manual: only the selected active profile is used."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Profile enabled"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Profile selection mode"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Profile used in manual mode."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Reliability"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Secret used by auto_js mode. Accepts the access token itself or the full OAuth redirect URL containing access_token. Never shown; an empty field keeps the stored value."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Security"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Server / Peer"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Service"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "TLS fingerprint used by the client: chrome or firefox."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Transport"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Transport + data"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Transport affects compatibility, latency and connection behaviour. Use a mode supported by the server (tcp is stored as tcp_tls)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Transport: checks connection, workers and control-plane state. Data: evaluates actual traffic signs. Transport + data: both checks (recommended production mode)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "User note. Does not affect the connection."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "VK auth path: vkcalls (default) or auto_js."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "VK client IDs (advanced; leave empty to use defaults)."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "When the size is reached the existing log rotation is used."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "required for an enabled profile"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "— global —"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "— unchanged —"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "d"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Auto"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "None"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Routes installed"
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "No routes/rules/tables; WAN, DNS and firewall unchanged."
+msgstr ""
+
+#: view/csqtt/*.js menu.d/luci-app-csqtt.json
+msgid "Number of parallel CSQTT worker channels (9..126). The effective value is rounded to the nearest multiple of 9."
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Check hashes"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "VK hashes / links field is empty"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Checking hashes…"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Hash check failed: %s"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Hash check failed"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "No hashes to check"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Valid: %s · invalid: %s"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "valid"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "invalid"
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "CSQTT tunnel status"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "About"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Versions"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Core version"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "running"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "packaged"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Original project"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Original project author"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "License"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Required notice"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Original project and notices"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "Personal edition of the CSQTT client for OpenWrt (LuCI panel)."
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "The core engine — tunnel, protocols, profiles and service management — is the unchanged original CSQTT."
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "This is a personal, non-commercial edition. The original project, its author, license and required notices are preserved."
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "The core version is read from the running daemon; if the service is stopped, the packaged core version is shown."
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "All changes saved"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Bigger"
+msgstr ""
+
+#: view/csqtt/captcha.js
+msgid "CAPTCHA challenges"
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "Diagnostics"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Down"
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "Error"
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "Fix the highlighted fields: %s"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Follow"
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "Global settings"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Log text size"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Reset"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Server profiles"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Service logs"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Smaller"
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "Technical details"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Text size and line wrapping apply to the log area only and are remembered."
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "There are unsaved changes"
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "Tunnel and network"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "Up"
+msgstr ""
+
+#: view/csqtt/settings.js
+msgid "Value must be between %s and %s."
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "Version"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "Wrap lines"
+msgstr ""
+
+#: view/csqtt/logs.js
+msgid "source"
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "transport"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "csqtt://connect?v=2&host=…&peer=…&password=… (or legacy csqtt://pass@host:port)"
+msgstr ""
+
+#: view/csqtt/profiles.js
+msgid "VK token not recognized. Paste the token itself or the full OAuth redirect URL containing access_token."
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "Traffic confirmed"
+msgstr ""
+
+#: view/csqtt/status.js
+msgid "No traffic yet"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "OpenWrt client package"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "LuCI panel"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "LuCI panel author"
+msgstr ""
+
+#: view/csqtt/about.js
+msgid "The core engine is the unchanged original CSQTT. The OpenWrt client package and the LuCI panel are versioned separately from the core, so a package version (1.0) does not mean a new core version (2.1.9)."
+msgstr ""
+#: view/csqtt/*.js
+msgid "Details"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Turn the service on and choose how the working profile is selected."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "How CSQTT switches between profiles and recovers after failures."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "How the connection state is checked."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "What happens when a profile needs CAPTCHA."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Tunnel interface parameters. CSQTT stays interface-only."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Log detail and size."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Read-only checks and the isolation model."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Saving…"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Save error"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Run configuration check"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "CSQTT service log."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Check the configuration and the isolation rules."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Could not save changes"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Diagnostics complete"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Diagnostics failed"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Diagnostics found issues"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "How CSQTT reacts to connection failures and recovery."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "No profiles yet. Add a profile or import a link."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Run diagnostics"
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Service startup and profile selection."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "Used only in manual selection mode."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "What happens when a profile requires CAPTCHA."
+msgstr ""
+
+#: view/csqtt/*.js
+msgid "csqtt0 tunnel interface and its DNS."
+msgstr ""
+

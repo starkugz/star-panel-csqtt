@@ -14,11 +14,13 @@ set -eu
 
 REPO="starkugz/star-panel-csqtt"
 VERSION="${CSQTT_VERSION:-}"
-PKG1="csqtt_2.1.9_aarch64_cortex-a53.apk"
-PKG2="luci-app-csqtt_2.1.9_all.apk"
+# Версия пакета интеграции/панели — 1.0.0; встроенное ядро — 2.1.9.
+PKG1="csqtt_1.0.0_aarch64_cortex-a53.apk"
+PKG2="luci-app-csqtt_1.0.0_all.apk"
 PKG3="luci-i18n-csqtt-ru_all.apk"
 WORK="/tmp/csqtt-install.$$"
 BACKUP=""
+REQUIRED_DEPS="kmod-tun luci-base rpcd-mod-ucode ucode-mod-socket coreutils-timeout"
 
 log()  { printf '[+] %s\n' "$*"; }
 info() { printf '[i] %s\n' "$*"; }
@@ -72,6 +74,12 @@ log "Проверка свободного места..."
 check_space /tmp 30000
 check_space / 10000
 
+# Индекс пакетов нужен для резолва зависимостей (kmod-tun, luci-base,
+# rpcd-mod-ucode, ucode-mod-socket, coreutils-timeout). Без него apk add
+# локального файла может не найти зависимости на «чистом» устройстве.
+log "Обновление индекса пакетов (apk update)..."
+apk update >/dev/null 2>&1 || warn "apk update не удался (нет сети?) — зависимости могут не установиться"
+
 # --- 2. Версия и URL релиза --------------------------------------------------
 if [ -n "$VERSION" ]; then
 	BASE="https://github.com/${REPO}/releases/download/${VERSION}"
@@ -110,17 +118,42 @@ log "Проверка SHA256..."
 ( cd "$WORK" && sha256sum -c SHA256SUMS ) || die "контрольные суммы не совпали — загрузка повреждена."
 
 # --- 6. Установка -----------------------------------------------------------
+# apk может отказаться менять пакеты напрямую при смене схемы версий
+# (2.1.9-r1 -> 1.0.0 = понижение). Тогда — безопасный переход: резервная
+# копия конфигурации уже сделана, удаляем пакеты и ставим новые.
+install_packages() {
+	apk add --allow-untrusted "$WORK/$PKG1" "$WORK/$PKG2" "$WORK/$PKG3"
+}
+
 log "Установка пакетов..."
-if ! apk add --allow-untrusted "$WORK/$PKG1" "$WORK/$PKG2" "$WORK/$PKG3"; then
-	warn "установка завершилась с ошибкой."
-	[ -n "$BACKUP" ] && warn "конфигурация сохранена: $BACKUP"
-	die "apk add не удался."
+if ! install_packages; then
+	info "прямая замена не удалась (возможно, смена схемы версий 2.1.9 -> 1.0.0)."
+	info "Переход: удаление пакетов с сохранением конфигурации и повторная установка..."
+	apk del luci-app-csqtt csqtt >/dev/null 2>&1 || true
+	if ! install_packages; then
+		[ -n "$BACKUP" ] && warn "конфигурация сохранена: $BACKUP"
+		die "apk add не удался после перехода."
+	fi
+fi
+# Если apk удалил conffile при переходе — восстановить сохранённую копию.
+if [ ! -f /etc/config/csqtt ] && [ -n "$BACKUP" ] && [ -f "$BACKUP" ]; then
+	cp -p "$BACKUP" /etc/config/csqtt
+	info "конфигурация восстановлена из $BACKUP"
 fi
 
 # --- 7. Проверка результата -------------------------------------------------
+missing=""
+for dep in $REQUIRED_DEPS; do
+	apk info -e "$dep" >/dev/null 2>&1 || missing="$missing $dep"
+done
+if [ -n "$missing" ]; then
+	warn "не установлены обязательные зависимости:$missing"
+	die "установка не завершена: установите зависимости и повторите."
+fi
 [ -x /usr/bin/csqtt ] || die "после установки нет /usr/bin/csqtt."
 NEW_VER=$(installed_version)
 info "установлено: ${NEW_VER:-csqtt}"
+info "ядро: $(/usr/bin/csqtt version 2>/dev/null | head -n1 || echo '?')"
 
 if [ -x /etc/init.d/csqtt ] && /etc/init.d/csqtt enabled 2>/dev/null; then
 	info "автозапуск службы включён."
@@ -131,13 +164,19 @@ fi
 # --- 8. Дальнейшие шаги и откат ---------------------------------------------
 cat <<EOF
 
-[+] Готово: CSQTT установлен (ядро + LuCI + русский перевод).
+[+] Готово: CSQTT 1.0 установлен (пакет для OpenWrt + панель LuCI + ядро 2.1.9).
 
-Дальше:
+Дальше (обязательно включить профиль и службу):
   1. LuCI → Службы → star-panel-csqtt
-  2. Профиль: csqtt profile import 'csqtt://…' --commit --activate
-  3. Включить: uci set csqtt.main.enabled='1'; uci commit csqtt
-  4. Запустить: /etc/init.d/csqtt enable; /etc/init.d/csqtt start
+  2. Профиль (ВКЛЮЧИТЕ его): csqtt profile import 'csqtt://…' --commit --activate
+  3. VK: вставьте VK access token или полный OAuth redirect-URL (поле VK JS token)
+  4. Служба: uci set csqtt.main.enabled='1'; uci commit csqtt
+  5. Запуск: /etc/init.d/csqtt enable; /etc/init.d/csqtt start
+  6. Проверка: csqtt status; csqtt doctor
+  7. Трафик: привязать прокси к csqtt0 (Mihomo/ssclash, interface-name: csqtt0)
+
+ВАЖНО: interface-only — установка сама по себе НЕ направляет весь трафик в
+туннель; нужен пользовательский прокси, привязанный к csqtt0.
 
 Откат к предыдущей версии:
   /etc/init.d/csqtt stop

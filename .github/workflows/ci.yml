@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    name: rust (fmt + clippy + unit + M5)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Host dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config cmake python3 \
+            curl file shellcheck
+
+      - name: Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      # host-бинарь нужен M5-тестам (doctor на дефолтном конфиге)
+      - name: Build host binary
+        working-directory: csqtt-openwrt
+        run: cargo build --bin csqtt
+
+      - name: fmt + clippy + unit + M5
+        working-directory: csqtt-openwrt
+        run: bash scripts/run-tests.sh
+
+  luci:
+    name: luci + packages (M6/M7)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3 jq shellcheck gettext
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ucode ставится из исходников: без него критичные RPC-проверки
+      # LuCI-бекенда (M6) уходили бы в SKIP.
+      - name: Install ucode (M6 backend)
+        run: sh scripts/install-ucode.sh
+
+      - name: M7 packages
+        run: sh openwrt/tests/packages/verify-apk.sh
+
+      - name: M6 LuCI
+        run: sh openwrt/tests/luci/run.sh

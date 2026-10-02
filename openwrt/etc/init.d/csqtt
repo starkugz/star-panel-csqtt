@@ -1,0 +1,91 @@
+#!/bin/sh /etc/rc.common
+# SPDX-FileCopyrightText: 2026 amurcanov
+# SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+# [M5] Init-скрипт CSQTT для OpenWrt (procd). Конфиг — UCI /etc/config/csqtt
+# (схема M4a), переходная env-file-версия заменена.
+# ПРИНЦИП ИЗОЛЯЦИИ: скрипт не выполняет и не регистрирует команд маршрути-
+# зации, адресации, DNS и локальной защиты — контракт M3X: interface-only,
+# route/rule/таблицы не нужны; служба CSQTT (M4b) их не ставит.
+
+# shellcheck disable=SC2034  # START/STOP/USE_PROCD читает /etc/rc.common, не этот скрипт
+START=99
+STOP=15
+USE_PROCD=1
+
+# Production-значения — константы контракта; переопределение окружением
+# используется только интеграционным тестом openwrt/tests/openwrt/run.sh.
+CSQTT_BIN="${CSQTT_BIN:-/usr/bin/csqtt}"
+CSQTT_UCI="${CSQTT_UCI:-/etc/config/csqtt}"
+# [High-2 AUDIT] Runtime-каталог status.json: /var/run — tmpfs, на свежей
+# загрузке каталога нет — создаём до старта службы CSQTT (идемпотентно).
+CSQTT_RUN_DIR="${CSQTT_RUN_DIR:-/var/run/csqtt}"
+
+start_service() {
+	if [ ! -x "$CSQTT_BIN" ]; then
+		echo "csqtt: $CSQTT_BIN не найден или не исполняемый" >&2
+		return 1
+	fi
+	if [ ! -f "$CSQTT_UCI" ]; then
+		echo "csqtt: нет конфига $CSQTT_UCI (шаблон — в пакете, etc/config/csqtt)" >&2
+		return 1
+	fi
+
+	# [High-2 AUDIT] Гарантированный runtime-каталог до первой записи
+	# status.json (0755: каталог читают rpcd/LuCI; секретов там нет).
+	# Сбой mkdir не блокирует туннель — служба CSQTT создаёт каталог сам и
+	# продолжит попытки (write_status_atomic), ошибка видна в логе.
+	if ! mkdir -p "$CSQTT_RUN_DIR" 2>/dev/null; then
+		echo "csqtt: не удалось создать $CSQTT_RUN_DIR — status.json может быть недоступен" >&2
+	else
+		chmod 755 "$CSQTT_RUN_DIR" 2>/dev/null
+	fi
+
+	# TUN-модуль ядра (только загрузка модуля; сеть не трогается)
+	[ -e /dev/net/tun ] || modprobe tun 2>/dev/null
+
+	# Ворота старта: csqtt doctor (read-only). exit 2 (FAIL: конфиг/ TUN) —
+	# лог + отказ; exit 1 (WARN: peer молчит, leftover csqtt0, rp_filter) —
+	# стартуем, служба CSQTT и failover-пул разберутся сами.
+	"$CSQTT_BIN" doctor --config "$CSQTT_UCI"
+	doctor_rc=$?
+	if [ "$doctor_rc" -ge 2 ]; then
+		echo "csqtt: doctor завершился с кодом $doctor_rc — запуск отменён" >&2
+		return 1
+	fi
+
+	procd_open_instance main
+	procd_set_param command "$CSQTT_BIN" run --config "$CSQTT_UCI"
+	procd_set_param respawn 3600 5 0
+	procd_set_param stdout 1
+	procd_set_param stderr 1
+	procd_set_param limits core="0 0"
+	procd_close_instance
+}
+
+# Авто-reload после коммита UCI-конфига csqtt (без stop/start, csqtt0 не рвётся).
+service_triggers() {
+	procd_add_reload_trigger csqtt
+}
+
+# [M4b] служба CSQTT слушает SIGHUP и сам перечитывает UCI-конфиг — reload_service
+# только шлёт сигнал (stop/start НЕ делает).
+reload_service() {
+	CSQTT_PID=$(pidof "$(basename "$CSQTT_BIN")" 2>/dev/null)
+	if [ -z "$CSQTT_PID" ]; then
+		echo "csqtt: служба CSQTT не запущена — SIGHUP пропущен" >&2
+		return 1
+	fi
+	# shellcheck disable=SC2086  # pidof может вернуть несколько pid — намеренный разбор списка
+	kill -HUP $CSQTT_PID
+}
+
+# /etc/init.d/csqtt status -> csqtt status (exit 0 подключён / 1 нет / 2 служба CSQTT не запущена)
+status_service() {
+	"$CSQTT_BIN" status
+}
+
+# /etc/init.d/csqtt doctor -> полная диагностика (read-only)
+extra_command "doctor" "Проверка конфига и окружения (csqtt doctor)"
+doctor() {
+	"$CSQTT_BIN" doctor --config "$CSQTT_UCI"
+}

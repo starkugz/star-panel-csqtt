@@ -1,0 +1,20 @@
+# Сборка (артефакты)
+/csqtt-openwrt/target/
+/csqtt-openwrt/**/target/
+/openwrt/csqtt/staging/
+/openwrt/csqtt/files/
+*.pdb
+*.rlib
+*.rmeta
+*.log
+/uc.out
+
+# Локальное
+/tmp/
+.env
+*.secret
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
