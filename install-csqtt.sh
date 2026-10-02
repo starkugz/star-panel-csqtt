@@ -129,7 +129,7 @@ log "Установка пакетов..."
 if ! install_packages; then
 	info "прямая замена не удалась (возможно, смена схемы версий 2.1.9 -> 1.0.0)."
 	info "Переход: удаление пакетов с сохранением конфигурации и повторная установка..."
-	apk del luci-app-csqtt csqtt >/dev/null 2>&1 || true
+	apk del luci-i18n-csqtt-ru luci-app-csqtt csqtt >/dev/null 2>&1 || true
 	if ! install_packages; then
 		[ -n "$BACKUP" ] && warn "конфигурация сохранена: $BACKUP"
 		die "apk add не удался после перехода."
@@ -180,7 +180,7 @@ cat <<EOF
 
 Откат к предыдущей версии:
   /etc/init.d/csqtt stop
-  apk del luci-app-csqtt csqtt
+  apk del luci-i18n-csqtt-ru luci-app-csqtt csqtt
   CSQTT_VERSION=<тег> sh -c "\$(wget --no-proxy -qO- https://github.com/${REPO}/raw/refs/heads/main/install-csqtt.sh)"
 EOF
 if [ -n "$BACKUP" ]; then

@@ -105,7 +105,13 @@ apk add --allow-untrusted ./csqtt_1.0.0_aarch64_cortex-a53.apk ./luci-app-csqtt_
 ```sh
 /etc/init.d/csqtt stop
 /etc/init.d/csqtt disable
-apk del luci-app-csqtt csqtt
+# пакеты удаляются в порядке зависимостей:
+# luci-i18n-csqtt-ru зависит от luci-app-csqtt, а тот — от csqtt.
+for p in luci-i18n-csqtt-ru luci-app-csqtt csqtt; do
+    apk info -e "$p" >/dev/null 2>&1 && apk del "$p"
+done
+# конфигурация остаётся (conffile); полное удаление:
+rm -f /etc/config/csqtt
 ```
 
 ## Известные ограничения
