@@ -1,1 +1,0 @@
-csqtt://examplePassword1@198.51.100.10:46000

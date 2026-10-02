@@ -1,1 +1,0 @@
-csqtt://connect?v=2&host=198.51.100.10&peer=46000&password=examplePassword1&hashes=vOBHrOBk_KTZyF_QC_q8QzIRlaLc5y-KCvzoRX9Bt4GQ+ExampleHashOne00000000000000000000000000+su7RNT1kcQYsju_yvWU6FPBabruU3g-RqbYFCKxIk-_s+8bNya5fLZCO8njPAazYwo9myl-VGcb_HN60_Dcb1JIyk+ExampleHashTwo00000000000000000000000000+5lPng9m8ELmc5eKOeRn7kv-VHWHZpq_rAQpek4HsCXkk
