@@ -71,7 +71,8 @@ SNAPSHOT» не обещается: установщик проверяет ко
 wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | ash
 ```
 
-Скрипт определяет последний выпуск (или берёт заданный `CSQTT_VERSION=<тег>`),
+Скрипт определяет последний **стабильный** выпуск (GitHub `latest`, предварительные
+выпуски не учитываются; либо берёт заданный `CSQTT_VERSION=<тег>`),
 определяет сборку (25.12.x или SNAPSHOT) и архитектуру, выбирает набор пакетов,
 скачивает его, сверяет SHA256 каждого из трёх APK, проверяет платформу, версию
 `apk-tools`, свободное место и зависимости, делает сухой прогон установки
@@ -79,11 +80,15 @@ wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads
 ставит пакеты. `apk upgrade` не запускается — обновляются лишь индексы. При
 любой ошибке до установки пакеты и конфигурация не изменяются.
 
-Конкретный выпуск:
+Конкретный выпуск (для тестирования на SNAPSHOT — `v1.0.1`):
 
 ```sh
 wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.1 ash
 ```
+
+> Обычная команда (без `CSQTT_VERSION`) ставит текущий **стабильный Latest** —
+> сейчас это `v1.0.0`. Предварительный `v1.0.1` **не** назначается Latest,
+> поэтому для проверки на SNAPSHOT выбирайте его явно командой выше.
 
 ### Вручную (файлы из Release)
 
@@ -147,10 +152,10 @@ VK для приложения с доступом к звонкам. Напри
 удаляет пакеты при ошибке.
 
 ```sh
-# последний выпуск
+# последний стабильный выпуск (сейчас v1.0.0)
 wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | ash
-# или конкретный выпуск
-CSQTT_VERSION=v1.0.1 sh install-csqtt.sh
+# конкретный выпуск (для проверки на SNAPSHOT — предварительный v1.0.1)
+wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.1 ash
 ```
 
 Смена схемы версий (2.1.9 → 1.0.0/1.0.1) — это понижение номера пакета; `apk` обычно
