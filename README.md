@@ -188,11 +188,49 @@ rm -f /etc/config/csqtt
   `curl --interface csqtt0 https://1.1.1.1/cdn-cgi/trace`; если внешний IP равен
   IP сервера CSQTT, туннель работает.
 
+## Проверка на SNAPSHOT
+
+Поддержка SNAPSHOT подтверждена установкой и разрешением зависимостей; работа
+на реальном устройстве **ещё не проверена**. Выполняйте любые действия на своём
+роутере **только с согласия владельца**. Короткий сценарий:
+
+1. **Резервная копия.**
+   ```sh
+   cp -p /etc/config/csqtt /etc/config/csqtt.manual.bak
+   ```
+   (установщик и сам делает копию `/etc/config/csqtt.bak.<дата>`).
+2. **Установка конкретного выпуска** (не `latest`):
+   ```sh
+   wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.1 ash
+   ```
+3. **Служба и интерфейс:**
+   ```sh
+   /etc/init.d/csqtt enable; /etc/init.d/csqtt start
+   ubus call csqtt status
+   ip -4 addr show csqtt0
+   ```
+4. **Передача данных** (нужен включённый профиль и привязка к `csqtt0`):
+   ```sh
+   curl --interface csqtt0 https://1.1.1.1/cdn-cgi/trace
+   ```
+   сравните `ip=` с ожидаемым адресом CSQTT.
+5. **Диагностика без секретов:**
+   ```sh
+   csqtt doctor; csqtt version; uname -a; cat /etc/openwrt_release
+   logread | grep -i csqtt | tail -n 50
+   ```
+   **Не присылайте** токены, пароли, `vk_js_token` и ссылки `csqtt://…`.
+6. **Восстановление:** вернуть конфиг — `cp -p /etc/config/csqtt.manual.bak
+   /etc/config/csqtt`. Предыдущий выпуск — установить `CSQTT_VERSION=v1.0.0`
+   (это понижение; при ошибке установщик не удаляет пакеты, см. «Обновление»).
+
 ## Известные ограничения
 
 - Поддерживается только `aarch64_cortex-a53`; сборки OpenWrt — 25.12.x и
-  SNAPSHOT (`apk`). Для SNAPSHOT гарантируется проверяемая совместимость
-  конкретной сборки, а не «все будущие SNAPSHOT».
+  SNAPSHOT (`apk`). Для SNAPSHOT подтверждены **установка и разрешение
+  зависимостей** на конкретной ревизии `r36779-9b95be917b`; работа службы,
+  LuCI, туннеля и автозапуска на реальном SNAPSHOT пока **не проверена**
+  (см. «Проверка на SNAPSHOT»). Это не «полностью проверенная поддержка SNAPSHOT».
 - Только interface-only: без пользовательского прокси на `csqtt0` весь трафик
   остаётся вне туннеля.
 - `auto_js` требует действующего VK-токена с доступом к звонкам.
