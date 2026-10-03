@@ -1,6 +1,6 @@
 #!/bin/sh
 # ================================================================
-#  star-panel-csqtt — auto-installer для OpenWrt 25.12.x (apk)
+#  star-panel-csqtt — auto-installer для OpenWrt 25.12.x и SNAPSHOT (apk)
 #  Архитектура: aarch64_cortex-a53 (ARM64 Cortex-A53)
 #  Пакеты берутся из GitHub Release.
 #  https://github.com/starkugz/star-panel-csqtt
@@ -8,15 +8,22 @@
 #  Запуск (последний выпуск):
 #    wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | ash
 #  Конкретный выпуск (тег):
-#    wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.0 ash
+#    wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.1 ash
 #
 #  Принципы:
-#   - без CSQTT_VERSION выбирается последний выпуск; "latest" разрешается в
-#     конкретный тег ОДИН раз, до скачивания файлов;
+#   - поддерживаются ровно 25.12.x и SNAPSHOT (apk-tools 3); прочие релизы
+#     и архитектуры отклоняются ДО изменений системы;
+#   - набор пакетов выбирается автоматически по семейству прошивки
+#     (stable/snapshot): сначала ищется вариант `<имя>-<family>.apk`, затем
+#     общий; latest разрешается в конкретный тег ОДИН раз, до скачивания;
 #   - имена пакетов берутся из SHA256SUMS выбранного выпуска (не конструируются);
 #   - контрольная сумма проверяется для каждого из трёх APK;
-#   - любая ошибка до установки (нет файла, суммы, платформа, место,
-#     зависимости, резервная копия) останавливает работу ДО изменений пакетов;
+#   - до установки выполняется сухой прогон всего набора (apk add --simulate):
+#     проверяются arch, зависимости и совместимость kmod-tun с ядром;
+#   - любая ошибка до установки (нет файла, суммы, платформа, apk-tools,
+#     совместимость, место, зависимости, резервная копия) останавливает работу
+#     ДО изменений пакетов; массовое обновление прошивки (apk upgrade) не
+#     запускается — только обновление индексов (apk update);
 #   - установщик НЕ удаляет пакеты при ошибке apk add; удаление старой версии
 #     возможно только как осознанный переход при понижении версии и лишь при
 #     наличии проверенных пакетов для восстановления.
@@ -26,6 +33,7 @@ set -eu
 REPO="starkugz/star-panel-csqtt"
 ARCH_OK="aarch64_cortex-a53"
 OW_REL_OK="25.12"
+APK_TOOLS_MIN=3
 REQUIRED_DEPS="kmod-tun luci-base rpcd-mod-ucode ucode-mod-socket coreutils-timeout"
 NEED_KB_TMP=30000
 NEED_KB_ROOT=10000
@@ -105,16 +113,32 @@ check_platform() {
 	. "$OW_RELEASE"
 	ARCH="${DISTRIB_ARCH:-}"
 	OW_REL="${DISTRIB_RELEASE:-}"
-	info "OpenWrt ${OW_REL:-?}, arch ${ARCH:-?}"
+	OW_REV="${DISTRIB_REVISION:-}"
+	OW_TARGET="${DISTRIB_TARGET:-}"
+	info "OpenWrt ${OW_REL:-?}${OW_REV:+ ($OW_REV)}, arch ${ARCH:-?}${OW_TARGET:+, target $OW_TARGET}"
 	case "$ARCH" in
 		"$ARCH_OK") : ;;
 		*) die "поддерживается только $ARCH_OK (обнаружено: ${ARCH:-неизвестно})." ;;
 	esac
-	# Ровно 25.12.x, а не «любая версия >= 25»: будущие выпуски не поддерживаются
-	# так же, как не тестировались.
-	case "$OW_REL" in
-		"$OW_REL_OK".*) : ;;
-		*) die "поддерживается только OpenWrt ${OW_REL_OK}.x (обнаружено: ${OW_REL:-неизвестно})." ;;
+	# Два поддерживаемых семейства прошивки на apk-tools 3:
+	#   stable   — ровно 25.12.x (фиксированный выпуск);
+	#   snapshot — rolling-сборка; конкретная ревизия не «угадывается», а
+	#              проверяется по факту: ядро, kmod-tun и зависимости должны
+	#              разрешаться из репозиториев самого устройства (см. ниже).
+	OW_REL_LC=$(printf '%s' "$OW_REL" | tr '[:upper:]' '[:lower:]')
+	case "$OW_REL_LC" in
+		snapshot) FAMILY="snapshot" ;;
+		"$OW_REL_OK".*) FAMILY="stable" ;;
+		*) die "поддерживается OpenWrt ${OW_REL_OK}.x или SNAPSHOT (обнаружено: ${OW_REL:-неизвестно})." ;;
+	esac
+	info "семейство прошивки: $FAMILY."
+	# apk-tools 3 обязателен: пакеты имеют v3-формат (apk v3). Если версию
+	# определить не удалось — не блокируем (команда apk уже найдена), но
+	# заведомо старые (2.x/opkg) отсекаем.
+	APK_V=$(apk --version 2>/dev/null | sed -n 's/.*apk-tools[[:space:]]*\([0-9][0-9]*\).*/\1/p' | head -n1)
+	case "$APK_V" in
+		''|*[!0-9]*) : ;;
+		*) [ "$APK_V" -ge "$APK_TOOLS_MIN" ] || die "нужен apk-tools ${APK_TOOLS_MIN}+ (обнаружено: apk-tools $APK_V)." ;;
 	esac
 }
 
@@ -141,6 +165,11 @@ check_dependencies() {
 	if apk add --simulate $REQUIRED_DEPS >/dev/null 2>&1; then
 		info "зависимости разрешаются (будут установлены вместе с пакетами)."
 	else
+		# На SNAPSHOT самая частая причина — kmod-tun для другого ядра:
+		# модуль должен соответствовать именно running kernel.
+		if ! apk add --simulate kmod-tun >/dev/null 2>&1; then
+			die "не разрешается kmod-tun для ядра $(uname -r): модуль должен совпадать с ядром устройства. Обновите индексы (apk update) или прошивку и повторите; ничего не удалено и не изменено."
+		fi
 		die "не хватает зависимостей:$missing, и apk не может их разрешить. Установите их и повторите."
 	fi
 }
@@ -172,11 +201,54 @@ pick_asset() {
 		}' "$WORK/SHA256SUMS"
 }
 
+# --- выбор набора пакетов по семейству прошивки ------------------------------
+# Если в выпуске опубликован отдельный вариант для семейства
+# (`<имя>-<family>.apk`, family = stable|snapshot), он имеет приоритет;
+# иначе используется общий пакет. Для проверенной сборки SNAPSHOT общий набор
+# подходит (ядро статическое musl, панель/переводы — noarch), но механизм
+# оставляет возможность развести наборы без смены команды установки.
+pick_core() {
+	a=$(pick_asset "^csqtt_[0-9][^/]*_aarch64_cortex-a53-${FAMILY}[.]apk$")
+	[ -n "$a" ] || a=$(pick_asset '^csqtt_[0-9][^/]*_aarch64_cortex-a53[.]apk$')
+	printf '%s' "$a"
+}
+
+pick_panel() {
+	a=$(pick_asset "^luci-app-csqtt_[^/]*_all-${FAMILY}[.]apk$")
+	[ -n "$a" ] || a=$(pick_asset '^luci-app-csqtt_[^/]*_all[.]apk$')
+	printf '%s' "$a"
+}
+
+pick_i18n() {
+	a=$(pick_asset "^luci-i18n-csqtt-ru[^/]*-${FAMILY}[.]apk$")
+	[ -n "$a" ] || a=$(pick_asset '^luci-i18n-csqtt-ru[^/]*[.]apk$')
+	printf '%s' "$a"
+}
+
 download_and_verify() {
 	# download_and_verify <name> <expected_sha>
 	fetch "$BASE/$1" "$WORK/$1" || die "не удалось скачать $1 из выпуска $TAG."
 	actual=$(sha256sum "$WORK/$1" | awk '{print $1}')
 	[ "$actual" = "$2" ] || die "SHA256 $1 не совпала (получено $actual, ожидалось $2) — установка остановлена."
+}
+
+# --- проверка совместимости всего набора ДО установки -----------------------
+# Сухой прогон `apk add --simulate` по локальным файлам: apk проверяет arch,
+# разрешает зависимости (включая kmod-tun для running kernel) и ничего не
+# меняет в системе. Это и есть реальная проверка совместимости со SNAPSHOT
+# конкретной ревизии — без «флага разрешения» и без установки модулей ядра от
+# другой сборки.
+verify_package_set() {
+	# shellcheck disable=SC2086  # имена файлов без пробелов
+	plan=$(apk add --simulate --allow-untrusted \
+		"$WORK/$CORE_NAME" "$WORK/$PANEL_NAME" "$WORK/$I18N_NAME" 2>&1) && {
+		info "набор совместим: arch, зависимости и kmod-tun разрешаются."
+		return 0
+	}
+	if ! apk add --simulate kmod-tun >/dev/null 2>&1; then
+		die "набор несовместим: kmod-tun не разрешается для ядра $(uname -r). На SNAPSHOT модуль должен соответствовать ядру и цели; обновите индексы (apk update) или прошивку. apk: $(printf '%s' "$plan" | tail -n1)"
+	fi
+	die "набор несовместим с этой системой (arch/зависимости). apk: $(printf '%s' "$plan" | tail -n1)"
 }
 
 # --- установка --------------------------------------------------------------
@@ -236,10 +308,10 @@ log "Читаю SHA256SUMS выпуска $TAG ..."
 fetch "$BASE/SHA256SUMS" "$WORK/SHA256SUMS" \
 	|| die "выпуск $TAG недоступен или не содержит SHA256SUMS — установка остановлена."
 
-CORE=$(pick_asset '^csqtt_[0-9][^/]*_aarch64_cortex-a53[.]apk$')
-PANEL=$(pick_asset '^luci-app-csqtt_[^/]*_all[.]apk$')
-I18N=$(pick_asset '^luci-i18n-csqtt-ru[^/]*[.]apk$')
-[ -n "$CORE" ] || die "в выпуске $TAG нет пакета csqtt (aarch64_cortex-a53)."
+CORE=$(pick_core)
+PANEL=$(pick_panel)
+I18N=$(pick_i18n)
+[ -n "$CORE" ] || die "в выпуске $TAG нет пакета csqtt (aarch64_cortex-a53, family=$FAMILY)."
 [ -n "$PANEL" ] || die "в выпуске $TAG нет пакета luci-app-csqtt."
 [ -n "$I18N" ] || die "в выпуске $TAG нет пакета luci-i18n-csqtt-ru."
 
@@ -262,8 +334,11 @@ info "контрольные суммы всех трёх пакетов сов�
 log "Проверка свободного места ..."
 check_space "$TMPBASE" "$NEED_KB_TMP"
 check_space "${ROOT}/" "$NEED_KB_ROOT"
+# Только индексы: apk upgrade (массовое обновление прошивки) НЕ вызывается.
 apk update >/dev/null 2>&1 || warn "apk update не удался (нет сети?) — зависимости могут не установиться."
 check_dependencies
+log "Проверка совместимости набора (apk --simulate) ..."
+verify_package_set
 log "Резервная копия конфигурации ..."
 backup_config
 ENABLED_BEFORE=0
@@ -333,6 +408,7 @@ fi
 cat <<EOF
 
 [+] Готово: star-panel-csqtt установлен (пакет + панель LuCI + ядро CSQTT 2.1.9).
+    OpenWrt ${OW_REL}${OW_REV:+ ($OW_REV)}, семейство ${FAMILY}, arch ${ARCH}.
 
 Дальше в LuCI (Службы → star-panel-csqtt):
   1. Профили → Импортировать ссылку: вставьте ссылку csqtt://… (без отметки «Активировать»).

@@ -1,8 +1,8 @@
 # star-panel-csqtt
 
-Пакет **CSQTT** для роутеров на **OpenWrt 25.12.x** (`apk`), архитектура
-`aarch64_cortex-a53`. Устанавливает на роутер службу CSQTT (`/usr/bin/csqtt`) и
-панель управления LuCI.
+Пакет **CSQTT** для роутеров на **OpenWrt 25.12.x** и **OpenWrt SNAPSHOT**
+(`apk`), архитектура `aarch64_cortex-a53`. Устанавливает на роутер службу CSQTT
+(`/usr/bin/csqtt`) и панель управления LuCI.
 
 CSQTT работает **interface-only**: поднимается только интерфейс `csqtt0`; маршруты,
 системный DNS, firewall и NAT не изменяются. Трафик в туннель направляет
@@ -16,8 +16,8 @@ CSQTT работает **interface-only**: поднимается только �
 
 | Компонент | Версия |
 |---|---|
-| Пакет для OpenWrt (`csqtt`) | **1.0.0** |
-| Панель LuCI (`luci-app-csqtt`) | **1.0.0** |
+| Пакет для OpenWrt (`csqtt`) | **1.0.1** |
+| Панель LuCI (`luci-app-csqtt`) | **1.0.1** |
 | Встроенное ядро CSQTT (`csqtt-core`) | **2.1.9** |
 
 Ядро — оригинальный CSQTT и не переименовывается в 1.0. Версия ядра отображается
@@ -50,9 +50,16 @@ CSQTT работает **interface-only**: поднимается только �
 
 ## Требования
 
-- Роутер на OpenWrt 25.12.x с менеджером пакетов `apk`, архитектура
-  `aarch64_cortex-a53`.
+- Роутер на OpenWrt **25.12.x** или **SNAPSHOT** с менеджером пакетов `apk`
+  (apk-tools 3), архитектура `aarch64_cortex-a53`.
 - Доступ в интернет для установки зависимостей из репозитория OpenWrt.
+
+Один и тот же набор пакетов подходит обеим сборкам: ядро — статический
+musl-бинарник, панель и перевод не зависят от ABI. Единственная
+сборко-зависимая зависимость — `kmod-tun`; она ставится из репозиториев самого
+устройства. SNAPSHOT — rolling-сборка, поэтому «совместимость со всеми
+SNAPSHOT» не обещается: установщик проверяет конкретную сборку на месте.
+Отдельный флаг разрешения для SNAPSHOT не нужен.
 - Данные сервера CSQTT: ссылка подключения `csqtt://…`. Для режима `auto_js` —
   VK access-токен.
 
@@ -65,30 +72,32 @@ wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads
 ```
 
 Скрипт определяет последний выпуск (или берёт заданный `CSQTT_VERSION=<тег>`),
-скачивает пакеты выбранного выпуска, сверяет SHA256 каждого из трёх APK,
-проверяет платформу, свободное место и зависимости, делает резервную копию
-конфигурации и только затем ставит пакеты. При любой ошибке до установки пакеты и
-конфигурация не изменяются.
+определяет сборку (25.12.x или SNAPSHOT) и архитектуру, выбирает набор пакетов,
+скачивает его, сверяет SHA256 каждого из трёх APK, проверяет платформу, версию
+`apk-tools`, свободное место и зависимости, делает сухой прогон установки
+(`apk add --simulate`), сохраняет резервную копию конфигурации и только затем
+ставит пакеты. `apk upgrade` не запускается — обновляются лишь индексы. При
+любой ошибке до установки пакеты и конфигурация не изменяются.
 
 Конкретный выпуск:
 
 ```sh
-wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.0 ash
+wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | CSQTT_VERSION=v1.0.1 ash
 ```
 
 ### Вручную (файлы из Release)
 
 Скачайте из раздела [Releases](https://github.com/starkugz/star-panel-csqtt/releases):
 
-- `csqtt_1.0.0_aarch64_cortex-a53.apk`
-- `luci-app-csqtt_1.0.0_all.apk`
+- `csqtt_1.0.1_aarch64_cortex-a53.apk`
+- `luci-app-csqtt_1.0.1_all.apk`
 - `luci-i18n-csqtt-ru_all.apk`
 - `SHA256SUMS` — для проверки
 
 ```sh
 sha256sum -c SHA256SUMS
 apk update
-apk add --allow-untrusted ./csqtt_1.0.0_aarch64_cortex-a53.apk ./luci-app-csqtt_1.0.0_all.apk ./luci-i18n-csqtt-ru_all.apk
+apk add --allow-untrusted ./csqtt_1.0.1_aarch64_cortex-a53.apk ./luci-app-csqtt_1.0.1_all.apk ./luci-i18n-csqtt-ru_all.apk
 ```
 
 `--allow-untrusted` нужен, потому что пакеты собраны локально и не подписаны ключом
@@ -141,10 +150,10 @@ VK для приложения с доступом к звонкам. Напри
 # последний выпуск
 wget --no-proxy -qO- https://github.com/starkugz/star-panel-csqtt/raw/refs/heads/main/install-csqtt.sh | ash
 # или конкретный выпуск
-CSQTT_VERSION=v1.0.0 sh install-csqtt.sh
+CSQTT_VERSION=v1.0.1 sh install-csqtt.sh
 ```
 
-Смена схемы версий (2.1.9 → 1.0.0) — это понижение номера пакета; `apk` обычно
+Смена схемы версий (2.1.9 → 1.0.0/1.0.1) — это понижение номера пакета; `apk` обычно
 выполняет его сам. Если прямая замена не удаётся, установщик переходит к удалению
 и повторной установке **только** при наличии проверенных пакетов установленной
 версии для восстановления (каталог `CSQTT_ROLLBACK_DIR` или `/tmp/csqtt-rollback`);
@@ -181,7 +190,9 @@ rm -f /etc/config/csqtt
 
 ## Известные ограничения
 
-- Поддерживается только `aarch64_cortex-a53` и OpenWrt 25.12.x (`apk`).
+- Поддерживается только `aarch64_cortex-a53`; сборки OpenWrt — 25.12.x и
+  SNAPSHOT (`apk`). Для SNAPSHOT гарантируется проверяемая совместимость
+  конкретной сборки, а не «все будущие SNAPSHOT».
 - Только interface-only: без пользовательского прокси на `csqtt0` весь трафик
   остаётся вне туннеля.
 - `auto_js` требует действующего VK-токена с доступом к звонкам.
